@@ -1,0 +1,17 @@
+# Node.js
+node_modules
+
+# TypeScript
+dist/
+
+# Editor and OS files
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Environment files (for storing secrets and configuration)
+.env
+
+# Logs
+*.log
