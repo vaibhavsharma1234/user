@@ -31,4 +31,36 @@ export class WorkoutPlanHelper{
             throw error
         }
     }
+    static async GetAllWorkoutHelper(influencerId:string){
+        try{
+            const {success,planDBModels}=createPlanDbConnection()
+            if(success){
+                const workoutPlans= await planDBModels.Workout.find({influencer:influencerId})
+                return workoutPlans
+
+            }else{
+                throw new Error("Unable to connect to Plan db")
+            }
+
+        }catch(error){
+            throw error
+        }
+    }
+    static async UpdationHelper(workoutId:string,updatedWorkoutPlan:IWorkout){
+    try{
+        const {success,planDBModels}=createPlanDbConnection()
+        if(success){
+            const updatePlan =planDBModels.Workout.findByIdAndUpdate(workoutId, { $set: updatedWorkoutPlan },
+                { new: true })
+            
+            return updatePlan
+
+        }else{
+            throw new Error("Unable to connect to Plan db")
+        }
+
+    }catch(error){
+        throw error
+    }
+    }
 }

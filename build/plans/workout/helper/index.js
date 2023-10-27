@@ -40,5 +40,39 @@ class WorkoutPlanHelper {
             }
         });
     }
+    static GetAllWorkoutHelper(influencerId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { success, planDBModels } = (0, authConnection_1.createPlanDbConnection)();
+                if (success) {
+                    const workoutPlans = yield planDBModels.Workout.find({ influencer: influencerId });
+                    return workoutPlans;
+                }
+                else {
+                    throw new Error("Unable to connect to Plan db");
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    static UpdationHelper(workoutId, updatedWorkoutPlan) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { success, planDBModels } = (0, authConnection_1.createPlanDbConnection)();
+                if (success) {
+                    const updatePlan = planDBModels.Workout.findByIdAndUpdate(workoutId, { $set: updatedWorkoutPlan }, { new: true });
+                    return updatePlan;
+                }
+                else {
+                    throw new Error("Unable to connect to Plan db");
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
 exports.WorkoutPlanHelper = WorkoutPlanHelper;
