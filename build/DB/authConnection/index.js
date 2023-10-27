@@ -35,14 +35,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAuthDbConnection = void 0;
+exports.createPlanDbConnection = exports.createAuthDbConnection = void 0;
 const dotenv = __importStar(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const auth_model_1 = require("../../store/models/auth.model");
+const plan_model_1 = require("../../store/models/plan.model"); // Import a function to create plan DB models
 dotenv.config();
 class DBConnection {
-    constructor() {
-    }
+    constructor() { }
     static getInstance() {
         if (!this.instance) {
             this.instance = new DBConnection();
@@ -54,27 +54,50 @@ class DBConnection {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log("Establishing Auth Database connection");
-                this.authDatabase = mongoose_1.default.createConnection(process.env.DB_URI, {
+                console.log(process.env.AUTH_DB_URI); // Use a separate environment variable for the "auth" DB
+                const connectionUri = process.env.DB_URI;
+                this.authDatabase = mongoose_1.default.createConnection(connectionUri, {
                     dbName: "auth",
                     user: process.env.DB_USER,
-                    pass: process.env.DB_PASSWORD
+                    pass: process.env.DB_PASSWORD,
                 });
                 console.log("🟢 Connected to Auth DB!");
                 //@ts-ignore
                 this.authDBModels = (0, auth_model_1.createAuthDBModels)(this.authDatabase);
+                // Similar steps for connecting to the "plan" database
+                console.log("Establishing Plan Database connection");
+                // console.log(process.env.PLAN_DB_URI); // Use a separate environment variable for the "plan" DB
+                // const connectionUri = process.env.DB_URI;
+                this.planDatabase = mongoose_1.default.createConnection(connectionUri, {
+                    dbName: "plan",
+                    user: process.env.DB_USER,
+                    pass: process.env.DB_PASSWORD,
+                });
+                console.log("🟢 Connected to Plan DB!");
+                //@ts-ignore
+                this.planDBModels = (0, plan_model_1.createPlanDBModels)(this.planDatabase);
             }
             catch (error) {
                 console.log("🔴 MONGODB_CLIENT closed: ", error.message);
             }
         });
     }
-    getDBModels() {
+    getAuthDBModels() {
         return this.authDBModels;
+    }
+    getPlanDBModels() {
+        return this.planDBModels;
     }
 }
 const createAuthDbConnection = () => {
     const dbConnection = DBConnection.getInstance();
-    const authDBModels = dbConnection.getDBModels();
-    return authDBModels ? { success: true, authDBModels: authDBModels } : { success: false, };
+    const authDBModels = dbConnection.getAuthDBModels();
+    return authDBModels ? { success: true, authDBModels: authDBModels } : { success: false };
 };
 exports.createAuthDbConnection = createAuthDbConnection;
+const createPlanDbConnection = () => {
+    const dbConnection = DBConnection.getInstance();
+    const planDBModels = dbConnection.getPlanDBModels();
+    return planDBModels ? { success: true, planDBModels: planDBModels } : { success: false };
+};
+exports.createPlanDbConnection = createPlanDbConnection;
