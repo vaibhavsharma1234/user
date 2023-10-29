@@ -3,6 +3,7 @@ import { verifyToken } from "../user/middleware";
 import { user_profile_routes } from "../user/routes";
 import { influencer_routes } from "../influencer/routes";
 import { workout_routes } from "../plans/workout/routes";
+import { diet_routes } from "../plans/diets/routes";
 export const routes = [
     {
         path: "/v1/auth",
@@ -27,5 +28,9 @@ export const routes = [
         router:workout_routes,
         middleware:verifyToken
     }
-    
+    ,{
+        path:'/v1/diet',
+        router:diet_routes,
+        middleware:verifyToken
+    }
 ]

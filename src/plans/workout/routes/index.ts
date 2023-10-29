@@ -9,3 +9,6 @@ workout_routes.post("/create",WorkoutPlanController.CreateWorkoutPlan)
 workout_routes.get('/byInfluencer/:influencerId',WorkoutPlanController.GetAllWorkoutPlanByInfluencer)
 workout_routes.put("/:workoutId",WorkoutPlanController.UpdateWorkoutPlan)
 workout_routes.delete("/:workoutId",WorkoutPlanController.DeleteWorkoutPlan)
+
+
+// 

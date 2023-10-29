@@ -6,6 +6,7 @@ const middleware_1 = require("../user/middleware");
 const routes_1 = require("../user/routes");
 const routes_2 = require("../influencer/routes");
 const routes_3 = require("../plans/workout/routes");
+const routes_4 = require("../plans/diets/routes");
 exports.routes = [
     {
         path: "/v1/auth",
@@ -24,6 +25,11 @@ exports.routes = [
     {
         path: "/v1/workout",
         router: routes_3.workout_routes,
+        middleware: middleware_1.verifyToken
+    },
+    {
+        path: '/v1/diet',
+        router: routes_4.diet_routes,
         middleware: middleware_1.verifyToken
     }
 ];
