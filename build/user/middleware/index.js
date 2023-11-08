@@ -7,7 +7,7 @@ exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const secret = process.env.SECRET_KEY;
 const verifyToken = (req, res, next) => {
-    const token = req.header('x-auth-token');
+    const token = req.header('X-Auth-Token');
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided' });
     }
@@ -21,6 +21,7 @@ const verifyToken = (req, res, next) => {
         next();
     }
     catch (error) {
+        console.log(error);
         res.status(401).json({ message: 'Invalid token' });
     }
 };

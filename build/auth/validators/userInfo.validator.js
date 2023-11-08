@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userValidatorSchema = void 0;
+exports.userValidatorSchema = exports.formatPhoneNumber = void 0;
 const joi_1 = __importDefault(require("joi"));
-function formatPhoneNumber(phoneNumber) {
+const formatPhoneNumber = (phoneNumber) => {
     if (phoneNumber.startsWith('+91')) {
         return phoneNumber; // Already has the "+91" prefix, no transformation needed.
     }
@@ -20,12 +20,13 @@ function formatPhoneNumber(phoneNumber) {
             throw new Error('Invalid phone number. It should be a 10-digit number.');
         }
     }
-}
+};
+exports.formatPhoneNumber = formatPhoneNumber;
 exports.userValidatorSchema = joi_1.default.object({
     name: joi_1.default.string().required(),
     username: joi_1.default.string().required(),
     emailId: joi_1.default.string().email().required(),
-    phoneNumber: joi_1.default.string().required().custom(formatPhoneNumber),
+    phoneNumber: joi_1.default.string().required().custom(exports.formatPhoneNumber),
     password: joi_1.default.string().required(),
     role: joi_1.default.string().required()
 });

@@ -13,6 +13,7 @@ exports.UserProfileController = void 0;
 const authConnection_1 = require("../../DB/authConnection");
 const responseCode_enum_1 = require("../../store/enums/HTTP_RESPONSE_CODE/responseCode.enum");
 const helper_1 = require("../helper");
+const userInfo_validator_1 = require("../../auth/validators/userInfo.validator");
 class UserProfileController {
     static GetUserDetails(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,7 +22,7 @@ class UserProfileController {
                 const { success, authDBModels } = (0, authConnection_1.createAuthDbConnection)();
                 if (success) {
                     console.log(req.user);
-                    const user = yield authDBModels.User.findOne({ emailId: req.user.emailId });
+                    const user = yield authDBModels.User.findOne({ _id: req.user._id });
                     console.log("user", user);
                     if (!user) {
                         return res.status(404).json({ message: 'User not found' });
@@ -49,42 +50,44 @@ class UserProfileController {
     }
     static UpdateUserDetails(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { username, emailId } = req.body;
+            const { username, emailId, name, phoneNumber } = req.body;
             const { success, authDBModels } = (0, authConnection_1.createAuthDbConnection)();
             if (success) {
-                console.log(req.user);
+                // Validate the request body
+                const { error, value } = userInfo_validator_1.userValidatorSchema.validate(req.body);
+                if (error) {
+                    return res.status(400).json({ message: 'Validation error', error: error.details });
+                }
                 try {
-                    const user = yield authDBModels.User.findOne({ emailId: req.user.emailId });
+                    const user = yield authDBModels.User.findOne({ _id: req.user._id });
                     if (!user) {
                         return res.status(404).json({ message: 'User not found' });
                     }
-                    if (username) {
-                        user.username = username;
+                    if (value.username) {
+                        user.username = value.username;
                     }
-                    if (emailId) {
-                        user.emailId = emailId;
+                    if (value.emailId) {
+                        user.emailId = value.emailId;
+                    }
+                    if (value.name) {
+                        user.name = value.name;
+                    }
+                    if (value.phoneNumber) {
+                        user.phoneNumber = value.phoneNumber;
                     }
                     // Save the updated user data
                     yield user.save();
-                    console.log("iss", user);
+                    // Generate a new token (if necessary)
                     const token = (0, helper_1.generateNewToken)(user);
-                    //             const updatedUser = {
-                    //                 data:{
-                    //                 ...user.toObject()
-                    //             } 
-                    //         }
-                    // console.log("updated user",updatedUser.data._doc)
                     // Return the user's profile data, excluding sensitive information like the password
                     const response = {
                         data: {
-                            user: user,
-                            token: token // Convert the Mongoose document to a plain JavaScript object
+                            user,
+                            token: token, // Convert the Mongoose document to a plain JavaScript object
                         },
-                        message: "User Details updated Successfully",
+                        message: 'User Details updated Successfully',
                     };
-                    return res
-                        .status(responseCode_enum_1.EHTTPS_RESPONSE_CODE.OK)
-                        .json(response);
+                    return res.status(responseCode_enum_1.EHTTPS_RESPONSE_CODE.OK).json(response);
                 }
                 catch (error) {
                     console.error(error);
@@ -92,7 +95,7 @@ class UserProfileController {
                 }
             }
             else {
-                throw new Error("Unable to connect to Auth db");
+                throw new Error('Unable to connect to Auth db');
             }
         });
     }

@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { IAuthUser } from "../../store/interfaces/auth/user.interface";
 const secret =process.env.SECRET_KEY
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.header('x-auth-token');
+    const token = req.header('X-Auth-Token');
   
     if (!token) {
       return res.status(401).json({ message: 'Access denied. No token provided' });
@@ -20,6 +20,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
       req.user = user;
       next();
     } catch (error) {
+      console.log(error)
       res.status(401).json({ message: 'Invalid token' });
     }
   };

@@ -1,5 +1,5 @@
 import Joi from "joi";
-function formatPhoneNumber(phoneNumber: string): string {
+export const formatPhoneNumber=(phoneNumber: string): string=> {
     if (phoneNumber.startsWith('+91')) {
       return phoneNumber; // Already has the "+91" prefix, no transformation needed.
     } else {
@@ -17,6 +17,7 @@ function formatPhoneNumber(phoneNumber: string): string {
 
   export const userValidatorSchema = Joi.object({
     name: Joi.string().required(),
+    
 
     username: Joi.string().required(),
     emailId: Joi.string().email().required(),
